@@ -8,8 +8,8 @@
  *   slash      → 挥动 — Sectumsempra      (Red)
  *
  * Wiring (XIAO ESP32S3):
- *   Button      → D1 (INPUT_PULLUP, active LOW)
- *   NeoPixel    → D0
+ *   Button      → D0 (INPUT_PULLUP, active LOW)
+ *   NeoPixel    → D1
  *   MPU SDA     → D4
  *   MPU SCL     → D5
  */
@@ -21,8 +21,8 @@
 #include <Wire.h>
 
 // ── Pin definitions ───────────────────────────────────────────────────────────
-#define BUTTON_PIN      D1
-#define NEOPIXEL_PIN    D0
+#define BUTTON_PIN      D0
+#define NEOPIXEL_PIN    D1
 #define NEOPIXEL_COUNT  8
 
 // ── Sensor objects ────────────────────────────────────────────────────────────
@@ -67,14 +67,12 @@ void led_rainbow() {
 
 // pull_out — Expecto Patronum: blue sweep tip-to-end, hold, fade out
 void led_expecto() {
-    // Sweep: light pixels one by one
     for (int i = 0; i < NEOPIXEL_COUNT; i++) {
-        strip.setPixelColor(i, strip.Color(0, 80, 255));
+        strip.setPixelColor(i, strip.Color(0, 0, 220));
         strip.show();
         delay(60);
     }
     delay(1500);
-    // Fade out
     for (int b = 220; b >= 0; b -= 8) {
         led_set(0, 0, b);
         delay(20);
@@ -130,7 +128,7 @@ void setup() {
     pinMode(BUTTON_PIN, INPUT_PULLUP);
 
     strip.begin();
-    strip.setBrightness(200);
+    strip.setBrightness(255);
     led_set(0, 0, 0);
 
     Serial.println("Initializing MPU6050 sensors...");
