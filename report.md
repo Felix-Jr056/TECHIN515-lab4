@@ -2,15 +2,14 @@
 
 ## Hardware Setup
 
-**截图提醒：** 拍一张实物照片 — 两个LSM6DS3传感器、NeoPixel灯条、按钮、XIAO ESP32C3全部接好的样子。
-
 <!-- ![hardware setup](assets/report/01_hardware_setup.jpg) -->
+*(Hardware photo — to be added)*
 
 **Connections:**
 - Handle sensor (LSM6DS3): SA0 → GND → I2C 0x6A
 - Sheath sensor (LSM6DS3): SA0 → 3.3V → I2C 0x6B
-- NeoPixel strip (8 LEDs): D0
-- Button: D1 (INPUT_PULLUP, active LOW)
+- NeoPixel strip (8 LEDs): D1
+- Button: D0 (INPUT_PULLUP, active LOW)
 - SDA: D4 / SCL: D5
 
 ---
@@ -27,20 +26,16 @@
 
 ### Dataset Overview
 
-**截图提醒 ①：** Edge Impulse → Data acquisition 页面，展示所有样本列表（showing Training/Test split, 3 labels, sample count）。
-
-<!-- ![dataset overview](assets/report/02_dataset_overview.png) -->
+![dataset overview](assets/report/02_dataset_overview.png)
 
 - Total samples: 120 (96 training / 24 test, 80/20 split)
 - Capture: 1 second @ 100 Hz = 100 samples per capture
 - Axes captured: ax1, ay1, az1 (handle) + ax2, ay2, az2 (sheath)
 - Collectors: Felix + Student B (20 samples each per gesture)
 
-**截图提醒 ②：** 点开一个 `pull_out` 样本，展示6轴波形图。再各点一个 `push_back` 和 `slash`，分别截图。
-
-<!-- ![sample pull_out](assets/report/03_sample_pull_out.png) -->
-<!-- ![sample push_back](assets/report/04_sample_push_back.png) -->
-<!-- ![sample slash](assets/report/05_sample_slash.png) -->
+![sample pull_out](assets/report/03_sample_pull_out.png)
+![sample push_back](assets/report/04_sample_push_back.png)
+![sample slash](assets/report/05_sample_slash.png)
 
 The three gestures produce visually distinct raw waveform signatures:
 
@@ -60,9 +55,7 @@ These distinct temporal profiles — sustained divergence, single impulse, and s
 
 ### Impulse Design
 
-**截图提醒 ③：** Edge Impulse → Impulse Design 页面，显示完整流水线（Time Series Input → Spectral Analysis → Classification → Output）。
-
-<!-- ![impulse design](assets/report/06_impulse_design.png) -->
+![impulse design](assets/report/06_impulse_design.png)
 
 **Configuration:**
 - Window size: 1000 ms
@@ -76,9 +69,7 @@ These distinct temporal profiles — sustained divergence, single impulse, and s
 
 ### DSP Features
 
-**截图提醒 ④：** Spectral Features → Generate features → 截图 **Feature Explorer** 散点图（3种颜色代表3个类别）。
-
-<!-- ![feature explorer](assets/report/07_feature_explorer.png) -->
+![feature explorer](assets/report/07_feature_explorer.png)
 
 The Feature Explorer (2D PCA projection of spectral features) shows clear spatial separation between the three gesture classes:
 
@@ -92,13 +83,7 @@ Overall, the three clusters are well-separated with no major overlap, indicating
 
 ### Neural Network Architecture & Training
 
-**截图提醒 ⑤：** Classifier 页面，截图 **training accuracy / loss curve**（左侧的图表）。
-
-<!-- ![training curves](assets/report/08_training_curves.png) -->
-
-**截图提醒 ⑥：** 截图 **Confusion Matrix**（training set）。
-
-<!-- ![confusion matrix train](assets/report/09_confusion_matrix_train.png) -->
+![training results](assets/report/08_training_results.png)
 
 **Hyperparameters:**
 
@@ -133,9 +118,7 @@ Overall, the three clusters are well-separated with no major overlap, indicating
 
 ### Model Testing
 
-**截图提醒 ⑦：** Model Testing 页面，截图测试集的 **accuracy + confusion matrix**。
-
-<!-- ![model testing](assets/report/10_model_testing.png) -->
+![model testing](assets/report/10_model_testing.png)
 
 **Test set results (24 samples, unoptimized float32):**
 
@@ -166,13 +149,11 @@ The UNCERTAIN column represents samples that fell below the 0.7 confidence thres
 
 ## Part 3: ESP32 Deployment
 
-### Live Classification
-
-**截图提醒 ⑧：** Live Classification 页面，实时测试时截图，展示gesture预测结果和置信度。
-
-<!-- ![live classification](assets/report/11_live_classification.png) -->
-
 ### Real-time Performance
+
+![serial monitor output](assets/report/12_serial_output.png)
+
+Serial Monitor output showing real-time inference results with confidence scores (push_back 98.0%, pull_out 82–88%, slash 99.6%).
 
 Testing methodology: 10 repetitions per gesture, recorded prediction vs ground truth.
 
@@ -184,24 +165,19 @@ Testing methodology: 10 repetitions per gesture, recorded prediction vs ground t
 
 ### Button-triggered Inference
 
-The wand triggers capture on button press (D1, active LOW) rather than Serial command. A rainbow LED animation plays during the 1-second capture window. After inference:
+The wand triggers capture on button press (D0, active LOW) rather than Serial command. A rainbow LED animation plays during the 1-second capture window. After inference:
 
-- `pull_out` → Blue (0, 0, 220) — Expecto Patronum
-- `push_back` → Green (0, 200, 0) — Episkey  
-- `slash` → Red (220, 0, 0) — Sectumsempra
-- Uncertain → Grey (80, 80, 80)
-
-**截图提醒 ⑨ (可选)：** Serial Monitor 截图，展示inference输出（gesture name + confidence %）。
-
-<!-- ![serial monitor output](assets/report/12_serial_output.png) -->
+- `pull_out` → Blue sweep animation (Expecto Patronum — 拔剑)
+- `push_back` → Green breathing pulse × 3 (Episkey — 合剑)
+- `slash` → Red strobe × 3 then hold (Sectumsempra — 挥动)
+- Uncertain → Grey solid 1.5s
 
 ---
 
 ## Part 4: Battery & Enclosure
 
-**截图提醒 ⑩：** 拍实物照片 — 装进外壳后的完整wand。
-
 <!-- ![enclosure](assets/report/13_enclosure.jpg) -->
+*(Enclosure photo — to be added)*
 
 ---
 
@@ -219,3 +195,4 @@ The wand triggers capture on button press (D1, active LOW) rather than Serial co
 | Both sensors same I2C address (0x6B) | Rewrote I2C scanner; found SA0 pin wiring error; moved handle SA0 → GND |
 | MPU6050 library wrong for LSM6DS3 | Switched to `Adafruit_LSM6DS3`, updated addresses 0x6A/0x6B |
 | Serial Monitor blocking Python script | Close Arduino Serial Monitor before running capture script |
+| NeoPixel not lighting up | Found NeoPixel on D1 not D0; corrected pin definition in firmware |
