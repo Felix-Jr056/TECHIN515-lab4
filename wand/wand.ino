@@ -14,14 +14,14 @@
  *   MPU SCL     → D5
  */
 
-#include <felix_wand_inferencing.h>
+#include <_felix_new_inferencing.h>
 #include <Adafruit_LSM6DS3.h>
 #include <Adafruit_Sensor.h>
 #include <Adafruit_NeoPixel.h>
 #include <Wire.h>
 
 // ── Pin definitions ───────────────────────────────────────────────────────────
-#define BUTTON_PIN      D0
+#define BUTTON_PIN      D2
 #define NEOPIXEL_PIN    D1
 #define NEOPIXEL_COUNT  8
 
@@ -262,7 +262,7 @@ void loop() {
     }
 
     if (capturing) {
-        led_rainbow();
+        led_set(255, 255, 255);
         capture_sensor_data();
     }
 }
